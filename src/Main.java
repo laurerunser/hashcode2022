@@ -51,7 +51,7 @@ public class Main {
         nb_projects = Integer.parseInt(l[1]);
 
         // parse contributors
-        for (int i = 0; i<nb_contrib; i++) {
+        for (int i = 0; i < nb_contrib; i++) {
             Contributor c = new Contributor();
             contributors.add(c);
 
@@ -59,7 +59,7 @@ public class Main {
             c.name = l1[0];
             c.nb_skill = Integer.parseInt(l1[1]);
             c.skills = new HashMap<>();
-            for (int j = 0; j<c.nb_skill; j++) {
+            for (int j = 0; j < c.nb_skill; j++) {
                 String[] l2 = sc.nextLine().split(" ");
                 c.skills.put(l2[0], Integer.parseInt(l2[1]));
             }
@@ -77,7 +77,7 @@ public class Main {
             p.best_before = Integer.parseInt(l1[3]);
             p.nb_contrib = Integer.parseInt(l1[4]);
             p.roles = new LinkedList<>();
-            for (int j = 0; j<p.nb_contrib; j++) {
+            for (int j = 0; j < p.nb_contrib; j++) {
                 Role r = new Role();
                 p.roles.add(r);
 
@@ -101,6 +101,7 @@ public class Main {
             }
         });
     }
+
     static ArrayList<Contributor> get_available_contributors(int current_time) {
         ArrayList<Contributor> available = new ArrayList<>();
         for (Contributor c : contributors) {
@@ -111,47 +112,44 @@ public class Main {
         return available;
     }
 
-    static void traitement(int max_time, LinkedList<Project> finis){
+    static void traitement(int max_time, LinkedList<Project> finis) {
         sort_projects();
 
-        for(int current_time=0;current_time<max_time;current_time++){
-            for(int i=0;i<projects.size();i++){
-                Project p=projects.get(i);
-                if(p.completed){
-
-                }else{
-                    LinkedList<Role> ptmp=p.roles;
-                    Role last=ptmp.getLast();
-                    int j=0;
+        for (int current_time = 0; current_time < max_time; current_time++) {
+            System.out.println(current_time);
+            System.out.println(get_available_contributors(current_time));
+            for (int i = 0; i < projects.size(); i++) {
+                Project p = projects.get(i);
+                if (!p.completed) {
+                    LinkedList<Role> ptmp = p.roles;
+                    Role last = ptmp.getLast();
                     Role rtmp;
-                    ArrayList<Contributor> available=get_available_contributors(current_time);
-                    boolean f=true;
-                    LinkedList<Contributor> used=new LinkedList<Contributor>();
-                    LinkedList<String> usedskill=new LinkedList<String>();
-                    HashMap<String, Integer> usedskillval=new HashMap<String,Integer>();
-                    do{
-                        rtmp=ptmp.get(j);
-                        j++;
-                        String c=skill_available(available,rtmp.name,rtmp.skill,used);
-                        if(c.equals("1")){
-                            f=false;
-                        }
-                        else{
-                            rtmp.contributor=c;
+                    ArrayList<Contributor> available = get_available_contributors(current_time);
+                    boolean f = true;
+                    Contributor[] used = new Contributor[p.roles.size()];
+                    LinkedList<String> usedskill = new LinkedList<String>();
+                    HashMap<String, Integer> usedskillval = new HashMap<String, Integer>();
+                    for(int roleIndex = 0; roleIndex<p.roles.size(); roleIndex++) {
+                        rtmp = ptmp.get(roleIndex);
+                        used = skill_available(available, rtmp.name, roleIndex, rtmp.skill, used);
+                        if (used[roleIndex] == null) {
+                            f = false; // project can't be filled
+                            break;
+                        } else { // add contributor
+                            rtmp.contributor = used[roleIndex].name;
                             usedskill.add(rtmp.name);
-                            usedskillval.put(rtmp.name,rtmp.skill);
+                            usedskillval.put(rtmp.name, rtmp.skill);
                         }
-                    }while(rtmp!=last && f);
-                    if(f){
-                        for(int k=0;k<used.size();k++){
-                            used.get(k).available=current_time+p.time;
-                            String skill=usedskill.get(k);
-                            if(used.get(k).skills.get(skill)<=usedskillval.get(skill)){
-                                used.get(k).skills.put(skill,used.get(k).skills.get(skill)+1);
+                    }
+                    if (f) { // if the project if filled
+                        for (int k = 0; k < used.length; k++) {
+                            used[k].available = current_time + p.time;
+                            String skill = usedskill.get(k);
+                            if (used[k].skills.get(skill) <= usedskillval.get(skill)) {
+                                used[k].skills.put(skill, used[k].skills.get(skill) + 1);
                             }
-                            if(!(finis.contains(p))){
+                            if (!(finis.contains(p))) {
                                 finis.add(p);
-
                             }
                             p.completed=true;
 
@@ -160,60 +158,64 @@ public class Main {
                 }
             }
         }
-    
+
     }
-    public static String skill_available(ArrayList<Contributor> a, String s, int lvl,LinkedList<Contributor> used){
-        for (int i=0;i<a.size();i++){
-            Contributor tmp=a.get(i);
-            if(tmp.skills.containsKey(s)){
-                int clvl=tmp.skills.get(s);
-                if(clvl>=lvl){
+
+    public static Contributor[] skill_available(ArrayList<Contributor> a, String s, int skillIndex, int lvl, Contributor[] used) {
+        for (int i = 0; i < a.size(); i++) {
+            Contributor tmp = a.get(i);
+            if (tmp.skills.containsKey(s)) {
+                int clvl = tmp.skills.get(s);
+                if (clvl >= lvl) {
                     a.remove(tmp);
-                    used.add(tmp);
-                    return tmp.name;
+                    used[skillIndex] = tmp;
+                    return used;
                 }
             }
         }
-        return "1";
+        return used;
     }
 
-    static public void write_sol(String filePath, ArrayList<Project> ps)throws IOException{
+
+    static public void write_sol(String filePath, ArrayList<Project> ps) throws IOException {
         PrintWriter writer = new PrintWriter(filePath, StandardCharsets.US_ASCII);
-        LinkedList<Project> completed=new LinkedList<Project>();
-        int i=0;
-        for(int j=0;j<ps.size();j++){
-            if(ps.get(j).completed){
+        LinkedList<Project> completed = new LinkedList<Project>();
+        int i = 0;
+        for (int j = 0; j < ps.size(); j++) {
+            System.out.println(ps.get(j).completed);
+            if (ps.get(j).completed) {
                 completed.add(ps.get(j));
                 i++;
             }
         }
         writer.println(Integer.toString(i));
-        for(int j=0;j<i;j++){
-            LinkedList<Role> tmp=completed.get(j).roles;
+        for (int j = 0; j < i; j++) {
+            LinkedList<Role> tmp = completed.get(j).roles;
             writer.println(completed.get(j).name);
-            String ret=tmp.get(0).contributor;
-            for(int k=1;k<tmp.size();k++){
-                ret+=" "+tmp.get(k).contributor;
-            }
-            writer.println(ret);
-        }
-        writer.close();
-    }
-    static public void write_sol(String filePath, LinkedList<Project> ps)throws IOException{
-        PrintWriter writer = new PrintWriter(filePath, StandardCharsets.US_ASCII);
-        writer.println(Integer.toString(ps.size()));
-        for(int j=0;j<ps.size();j++){
-            LinkedList<Role> tmp=ps.get(j).roles;
-            writer.println(ps.get(j).name);
-            String ret=tmp.get(0).contributor;
-            for(int k=1;k<tmp.size();k++){
-                ret+=" "+tmp.get(k).contributor;
+            String ret = tmp.get(0).contributor;
+            for (int k = 1; k < tmp.size(); k++) {
+                ret += " " + tmp.get(k).contributor;
             }
             writer.println(ret);
         }
         writer.close();
     }
 
-   
+    static public void write_sol(String filePath, LinkedList<Project> ps) throws IOException {
+        PrintWriter writer = new PrintWriter(filePath, StandardCharsets.US_ASCII);
+        writer.println(Integer.toString(ps.size()));
+        for (int j = 0; j < ps.size(); j++) {
+            LinkedList<Role> tmp = ps.get(j).roles;
+            writer.println(ps.get(j).name);
+            String ret = tmp.get(0).contributor;
+            for (int k = 1; k < tmp.size(); k++) {
+                ret += " " + tmp.get(k).contributor;
+            }
+            writer.println(ret);
+        }
+        writer.close();
+    }
+
+
     // write sol
 }
