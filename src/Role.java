@@ -1,5 +1,5 @@
 public class Role {
-    String name;
+    String skill_name;
     int skill;
     String contributor = "";
 }

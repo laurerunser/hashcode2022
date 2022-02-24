@@ -1,9 +1,6 @@
-import java.lang.reflect.Array;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.*;
 
 public class Main {
@@ -19,7 +16,7 @@ public class Main {
             "d_dense_schedule.in.txt", "e_exceptional_skills.in.txt",
             "f_find_great_mentors.in.txt"};
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         InputStream ins = new FileInputStream("src/input_data/" + filenames[0]);
         Scanner obj = new Scanner(ins);
         parse(obj);
@@ -68,7 +65,7 @@ public class Main {
                 p.roles.add(r);
 
                 String[] l2 = sc.nextLine().split(" ");
-                r.name = l2[0];
+                r.skill_name = l2[0];
                 r.skill = Integer.parseInt(l2[1]);
             }
         }
@@ -116,7 +113,7 @@ public class Main {
 
                     // try to find a mentee
                     Optional<Contributor> mentee = available_contributors.stream()
-                            .filter(c -> c.skills.get(r.name) == r.skill - 1)
+                            .filter(c -> c.skills.get(r.skill_name) == r.skill - 1)
                             .findFirst();
 
                     // try to find a mentor
@@ -125,12 +122,12 @@ public class Main {
                         if (!found_mentor) {
                             // can't find a mentor, need to find a normal person to fill the role
                             Optional<Contributor> person = available_contributors.stream()
-                                    .filter(c -> c.skills.get(r.name) >= r.skill)
+                                    .filter(c -> c.skills.get(r.skill_name) >= r.skill)
                                     .findFirst();
                             if (person.isPresent()) {
                                 // remove from available & add to the role
                                 available_contributors.remove(person.get());
-                                r.name = person.get().name;
+                                r.contributor = person.get().name;
                                 candidates.add(person.get());
                             }
                         }
@@ -148,7 +145,7 @@ public class Main {
 
     static boolean all_roles_filled(Project p) {
         for (Role r : p.roles) {
-            if (r.name.equals("")) {
+            if (r.skill_name.equals("")) {
                 return false;
             }
         }
@@ -157,7 +154,7 @@ public class Main {
 
     static void remove_all_contribs(Project p) {
         for (Role r : p.roles) {
-            r.name = "";
+            r.skill_name = "";
         }
     }
 
@@ -170,11 +167,11 @@ public class Main {
         for (Contributor mentor : available_contributors) {
             if (mentor == mentee) continue;
             // mentor has the skill
-            if (mentor.skills.get(r.name) >= r.skill) {
+            if (mentor.skills.get(r.skill_name) >= r.skill) {
                 // try to find them a role
                 for (Role r2 : p_current.roles) {
                     if (r2.contributor.equals("") // role empty
-                            && mentor.skills.get(r2.name) >= r2.skill // right skill
+                            && mentor.skills.get(r2.skill_name) >= r2.skill // right skill
                     ) {
                         // ok found a mentor : add both to the list
                         r.contributor = mentee.name;
@@ -198,7 +195,22 @@ public class Main {
 
     // write sol
 
-    static void write_sol() {
+    static void write_sol() throws IOException {
+        ArrayList<Project> completed_projects = new ArrayList<>();
+        projects.forEach(p -> {
+            if (p.completed) completed_projects.add(p);
+        });
 
+        PrintWriter writer = new PrintWriter("out.txt", StandardCharsets.UTF_8);
+        for (Project p : completed_projects) {
+            writer.println(p.name);
+            StringBuilder contribs = new StringBuilder(p.roles.get(0).contributor);
+            for (int i = 1; i < p.roles.size(); i++) {
+                contribs.append(" ").append(p.roles.get(i).contributor);
+            }
+            writer.println(contribs);
+        }
+
+        writer.close();
     }
 }
