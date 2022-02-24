@@ -78,8 +78,12 @@ public class Main {
     void traitement(int max_time,   ArrayList<Project> projects){
         projects.sort();
         for(int current_time=0;current_time<max_time;current_time++){
-            for(int i=0;i<projects.size();i++){
-
+            for(int i=0;contributor.available||i<projects.size();i++){
+                Project p=projects.get(i);
+                LinkedList<Role> ptmp=p.roles;
+                while(ptmp.Next)
+                
+                
             }
         }
     
