@@ -23,21 +23,23 @@ public class Main {
             "f_find_great_mentors.in.txt"};
 
     public static void main(String[] args) throws FileNotFoundException {
-        InputStream ins = new FileInputStream("src/input_data/" + filenames[2]);
-        Scanner obj = new Scanner(ins);
-        parse(obj);
-        max_time=40;
-        LinkedList<Project> finis= new LinkedList<Project>();
-        traitement(max_time,finis);
-        /*for(int i=0;i<projects.size();i++){
-            System.out.println(projects.get(i).roles);
-        }*/
-        try{
-            write_sol("sol3.txt",finis);
-        }catch(Exception E){
-            E.printStackTrace();
+        for (int i=0;i<6;i++){
+            InputStream ins = new FileInputStream("src/input_data/" + filenames[i]);
+            Scanner obj = new Scanner(ins);
+            parse(obj);
+            max_time=40;
+            LinkedList<Project> finis= new LinkedList<Project>();
+            traitement(max_time,finis);
+            /*for(int i=0;i<projects.size();i++){
+                System.out.println(projects.get(i).roles);
+            }*/
+            try{
+                write_sol("sol"+i+".txt",finis);
+            }catch(Exception E){
+                E.printStackTrace();
+            }
         }
-
+        
 
     }
 
@@ -113,8 +115,6 @@ public class Main {
         sort_projects();
 
         for(int current_time=0;current_time<max_time;current_time++){
-            System.out.println(current_time);
-            System.out.println(get_available_contributors(current_time));
             for(int i=0;i<projects.size();i++){
                 Project p=projects.get(i);
                 if(p.completed){
@@ -153,7 +153,6 @@ public class Main {
                                 finis.add(p);
 
                             }
-                            System.out.println(p.name);
                             p.completed=true;
 
                         }
@@ -183,7 +182,6 @@ public class Main {
         LinkedList<Project> completed=new LinkedList<Project>();
         int i=0;
         for(int j=0;j<ps.size();j++){
-            System.out.println(ps.get(j).completed);
             if(ps.get(j).completed){
                 completed.add(ps.get(j));
                 i++;
