@@ -92,9 +92,9 @@ public class Main {
 
     static void sort_projects() {
         projects.sort((o1, o2) -> {
-            if (o1.score == o2.score) {
+            if (o1.best_before == o2.best_before) {
                 return 0;
-            } else if (o1.score > o2.score) {
+            } else if (o1.best_before < o2.best_before) {
                 return 1;
             } else {
                 return -1;
