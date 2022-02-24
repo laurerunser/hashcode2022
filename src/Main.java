@@ -2,7 +2,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOError;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Main {
@@ -22,6 +26,7 @@ public class Main {
         InputStream ins = new FileInputStream("src/input_data/" + filenames[0]);
         Scanner obj = new Scanner(ins);
         parse(obj);
+
     }
 
 
@@ -138,6 +143,28 @@ public class Main {
             }
         }
         return "1";
+    }
+
+    public void write_sol(String filePath, ArrayList<Project> ps)throws IOException{
+        PrintWriter writer = new PrintWriter(filePath, StandardCharsets.US_ASCII);
+        LinkedList<Project> completed=new LinkedList<Project>();
+        int i;
+        for(i=0;i<completed.size();i++){
+            if(ps.get(i).completed){
+                completed.add(ps.get(i));
+            }
+        }
+        writer.println(Integer.toString(i));
+        for(int j=0;j<i;j++){
+            LinkedList<Role> tmp=completed.get(j).roles;
+            writer.println(completed.get(j).name);
+            String ret=tmp.get(0).contributor;
+            
+            for(int k=1;k<tmp.size();k++){
+                ret+=" "+tmp.get(k).contributor;
+            }
+            writer.println(ret);
+        }
     }
 
    
