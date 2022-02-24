@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.io.FileInputStream;
@@ -83,7 +82,6 @@ public class Main {
             }
         });
     }
-
     static ArrayList<Contributor> get_available_contributors(int current_time) {
         ArrayList<Contributor> available = new ArrayList<>();
         for (Contributor c : contributors) {
@@ -101,7 +99,11 @@ public class Main {
             for(int i=0;contributor.available||i<projects.size();i++){
                 Project p=projects.get(i);
                 LinkedList<Role> ptmp=p.roles;
-                while(ptmp.Next)
+                Role last=ptmp.getLast();
+
+                while(rtmp!=last){
+
+                }
                 
                 
             }
