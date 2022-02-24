@@ -24,10 +24,12 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         for (int i=0;i<6;i++){
+            projects=new ArrayList<>();
+            contributors=new ArrayList<>();
             InputStream ins = new FileInputStream("src/input_data/" + filenames[i]);
             Scanner obj = new Scanner(ins);
             parse(obj);
-            max_time=40;
+            max_time=1000;
             LinkedList<Project> finis= new LinkedList<Project>();
             traitement(max_time,finis);
             /*for(int i=0;i<projects.size();i++){
