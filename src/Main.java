@@ -71,12 +71,21 @@ public class Main {
 
     // algo
 
-    // sort projects by score
+    static void sort_projects() {
+        projects.sort((o1, o2) -> {
+            if (o1.score == o2.score) {
+                return 0;
+            } else if (o1.score > o2.score) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+    }
 
-        // if contributors exist : do
-        // update skills + time available
-    void traitement(int max_time,   ArrayList<Project> projects){
-        projects.sort();
+    static void traitement(int max_time,   ArrayList<Project> projects){
+        sort_projects();
+
         for(int current_time=0;current_time<max_time;current_time++){
             for(int i=0;contributor.available||i<projects.size();i++){
                 Project p=projects.get(i);
