@@ -1,20 +1,73 @@
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.*;
 
 public class Main {
-    int nb_contrib;
-    int nb_projects;
-    int max_time; // biggest best before * 2
+    static int nb_contrib;
+    static int nb_projects;
+    static int max_time; // biggest best before * 2
 
-    ArrayList<Project> projects;
-    ArrayList<Contributor> contributors;
+    static ArrayList<Project> projects = new ArrayList<>();
+    static ArrayList<Contributor> contributors = new ArrayList<>();
 
-    public static void main(String[] args) {
+    static String[] filenames = {"a_an_example.in.txt",
+            "b_better_start_small.in.txt", "c_collaboration.in.txt",
+            "d_dense_schedule.in.txt", "e_exceptional_skills.in.txt",
+            "f_find_great_mentors.in.txt"};
 
+    public static void main(String[] args) throws FileNotFoundException {
+        InputStream ins = new FileInputStream("src/input_data/" + filenames[0]);
+        Scanner obj = new Scanner(ins);
+        parse(obj);
     }
 
 
     // parser
+    public static void parse(Scanner sc) {
+        String[] l = sc.nextLine().split(" ");
+        nb_contrib = Integer.parseInt(l[0]);
+        nb_projects = Integer.parseInt(l[1]);
+
+        // parse contributors
+        for (int i = 0; i<nb_contrib; i++) {
+            Contributor c = new Contributor();
+            contributors.add(c);
+
+            String[] l1 = sc.nextLine().split(" ");
+            c.name = l1[0];
+            c.nb_skill = Integer.parseInt(l1[1]);
+            c.skills = new HashMap<>();
+            for (int j = 0; j<c.nb_skill; j++) {
+                String[] l2 = sc.nextLine().split(" ");
+                c.skills.put(l2[0], Integer.parseInt(l2[1]));
+            }
+        }
+
+        // parse projects
+        for (int i = 0; i < nb_projects; i++) {
+            Project p = new Project();
+            projects.add(p);
+
+            String[] l1 = sc.nextLine().split(" ");
+            p.name = l1[0];
+            p.time = Integer.parseInt(l1[1]);
+            p.score = Integer.parseInt(l1[2]);
+            p.best_before = Integer.parseInt(l1[3]);
+            p.nb_contrib = Integer.parseInt(l1[4]);
+            p.roles = new LinkedList<>();
+            for (int j = 0; j<p.nb_contrib; j++) {
+                Role r = new Role();
+                p.roles.add(r);
+
+                String[] l2 = sc.nextLine().split(" ");
+                r.name = l2[0];
+                r.skill = Integer.parseInt(l2[1]);
+            }
+        }
+    }
 
     // algo
 

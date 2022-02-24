@@ -7,6 +7,8 @@ public class Project {
     int best_before;
     int nb_contrib;
 
+    boolean completed = false;
+
     LinkedList<Role> roles;
 
 }
