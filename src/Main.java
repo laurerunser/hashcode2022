@@ -174,6 +174,11 @@ public class Main {
         return used;
     }
 
+    static Contributor[] find_mentor(ArrayList<Contributor> available_contributors, String skill_name,
+                                     int skill_index, int lvl, Contributor[] used) {
+
+    }
+
     static public void write_sol(String filePath, ArrayList<Project> ps) throws IOException {
         PrintWriter writer = new PrintWriter(filePath, StandardCharsets.US_ASCII);
         LinkedList<Project> completed = new LinkedList<Project>();
