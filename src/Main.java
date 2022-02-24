@@ -96,19 +96,48 @@ public class Main {
         sort_projects();
 
         for(int current_time=0;current_time<max_time;current_time++){
-            for(int i=0;contributor.available||i<projects.size();i++){
+            for(int i=0;get_available_contributors(current_time).size()>projects.get(i).nb_contrib||i<projects.size();i++){
                 Project p=projects.get(i);
                 LinkedList<Role> ptmp=p.roles;
                 Role last=ptmp.getLast();
-
-                while(rtmp!=last){
-
+                int j=0;
+                Role rtmp;
+                ArrayList<Contributor> available=get_available_contributors(current_time);
+                boolean f=true;
+                LinkedList<Contributor> used=new LinkedList<Contributor>();
+                do{
+                    rtmp=ptmp.get(j);
+                    String c=skill_available(available,rtmp.name,rtmp.skill,used);
+                    if(c.equals("1")){
+                        f=false;
+                    }
+                    else{
+                        rtmp.contributor=c;
+                    }
+                }while(rtmp!=last && f);
+                if(f){
+                    for(int k=0;k<used.size();k++){
+                        used.get(k).available=current_time+p.time;
+                    }
                 }
-                
-                
+                p.completed=true;
             }
         }
     
+    }
+    public static String skill_available(ArrayList<Contributor> a, String s, int lvl,LinkedList<Contributor> used){
+        for (int i=0;i<a.size();i++){
+            Contributor tmp=a.get(i);
+            int clvl=tmp.skills.get(s);
+            if(tmp.skills.get(s)!=null){
+                if(clvl>=lvl){
+                    a.remove(tmp);
+                    used.add(tmp);
+                    return tmp.name;
+                }
+            }
+        }
+        return "1";
     }
 
    
