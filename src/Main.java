@@ -26,6 +26,17 @@ public class Main {
         InputStream ins = new FileInputStream("src/input_data/" + filenames[0]);
         Scanner obj = new Scanner(ins);
         parse(obj);
+        max_time=1000;
+        traitement(max_time);
+        /*for(int i=0;i<projects.size();i++){
+            System.out.println(projects.get(i).completed);
+        }*/
+        try{
+            write_sol("test.txt",projects);
+        }catch(Exception E){
+            E.printStackTrace();
+        }
+
 
     }
 
@@ -97,11 +108,11 @@ public class Main {
         return available;
     }
 
-    static void traitement(int max_time,   ArrayList<Project> projects){
+    static void traitement(int max_time){
         sort_projects();
 
         for(int current_time=0;current_time<max_time;current_time++){
-            for(int i=0;get_available_contributors(current_time).size()>projects.get(i).nb_contrib||i<projects.size();i++){
+            for(int i=0;i<projects.size();i++){
                 Project p=projects.get(i);
                 LinkedList<Role> ptmp=p.roles;
                 Role last=ptmp.getLast();
@@ -133,8 +144,8 @@ public class Main {
     public static String skill_available(ArrayList<Contributor> a, String s, int lvl,LinkedList<Contributor> used){
         for (int i=0;i<a.size();i++){
             Contributor tmp=a.get(i);
-            int clvl=tmp.skills.get(s);
-            if(tmp.skills.get(s)!=null){
+            if(tmp.skills.containsKey(s)){
+                int clvl=tmp.skills.get(s);
                 if(clvl>=lvl){
                     a.remove(tmp);
                     used.add(tmp);
@@ -145,15 +156,16 @@ public class Main {
         return "1";
     }
 
-    public void write_sol(String filePath, ArrayList<Project> ps)throws IOException{
+    static public void write_sol(String filePath, ArrayList<Project> ps)throws IOException{
         PrintWriter writer = new PrintWriter(filePath, StandardCharsets.US_ASCII);
         LinkedList<Project> completed=new LinkedList<Project>();
         int i;
-        for(i=0;i<completed.size();i++){
+        for(i=0;i<ps.size();i++){
             if(ps.get(i).completed){
                 completed.add(ps.get(i));
             }
         }
+        System.out.println(Integer.toString(i));
         writer.println(Integer.toString(i));
         for(int j=0;j<i;j++){
             LinkedList<Role> tmp=completed.get(j).roles;
@@ -165,6 +177,7 @@ public class Main {
             }
             writer.println(ret);
         }
+        writer.close();
     }
 
    
