@@ -6,4 +6,7 @@ public class Contributor {
     HashMap<String, Integer> skills;
 
     int available;
+    public String toString(){
+        return name;
+    }
 }
