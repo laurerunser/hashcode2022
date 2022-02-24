@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.io.FileInputStream;
@@ -81,6 +82,16 @@ public class Main {
                 return -1;
             }
         });
+    }
+
+    static ArrayList<Contributor> get_available_contributors(int current_time) {
+        ArrayList<Contributor> available = new ArrayList<>();
+        for (Contributor c : contributors) {
+            if (c.available >= current_time) {
+                available.add(c);
+            }
+        }
+        return available;
     }
 
     static void traitement(int max_time,   ArrayList<Project> projects){
