@@ -129,6 +129,7 @@ public class Main {
                                 available_contributors.remove(person.get());
                                 r.contributor = person.get().name;
                                 candidates.add(person.get());
+                                System.out.println("Found a person");
                             }
                         }
                     }
@@ -184,6 +185,7 @@ public class Main {
                         // add them to the candidates
                         candidates.add(mentee);
                         candidates.add(mentor);
+                        System.out.println("Found mentee and mentor");
                         return true;
                     }
                 }
